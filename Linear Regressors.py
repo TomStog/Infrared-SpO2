@@ -1,15 +1,10 @@
 # Linear Regression Algorithms
-from sklearn.linear_model import LinearRegression
-from sklearn.linear_model import Ridge
-from sklearn.linear_model import BayesianRidge
-from sklearn.linear_model import Lasso
-from sklearn.linear_model import ElasticNet
+from sklearn.linear_model import LinearRegression, Ridge, SGDRegressor, ElasticNet, Lasso, Lars, Lasso, LassoLars, HuberRegressor, QuantileRegressor, RANSACRegressor, TheilSenRegressor, PoissonRegressor, TweedieRegressor, GammaRegressor
 
 # Non-linear Regression Algorithms
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.ensemble import GradientBoostingRegressor
-from sklearn.ensemble import ExtraTreesRegressor
-from sklearn.ensemble import AdaBoostRegressor
+from sklearn.ensemble import AdaBoostRegressor, BaggingRegressor, ExtraTreesRegressor, GradientBoostingRegressor, RandomForestRegressor, StackingRegressor, VotingRegressor, HistGradientBoostingRegressor
+
+from sklearn.tree import DecisionTreeRegressor
 
 import pandas as pd
 from pandas import read_csv
@@ -19,9 +14,10 @@ from keras.models import load_model
 import numpy as np
 from statistics import mean, median
 from sklearn.model_selection import KFold
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
+import warnings
+
 from itertools import chain, combinations
-from heapq import nsmallest
 
 # "powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"
 
@@ -42,8 +38,8 @@ if __name__ == "__main__":
     """LOAD DATA"""
 
     # Read data from CSV file
-    data = pd.read_csv (r'/content/filename_12vars_16people_mag.csv')
-
+    data = pd.read_csv (r'./filename_12vars_21people_mag.csv')
+    warnings.filterwarnings("ignore")
     # Define y = f(x)
     predictors_list = np.array(my_combo)
     outcome = ['SpO2']
@@ -58,39 +54,94 @@ if __name__ == "__main__":
 
     mae_total = []
     mse_total = []
-
-    regression_list = [LinearRegression(), Ridge(), Lasso(alpha = 0.0001), Lasso(alpha = 0.001)]
+    mse_list = []
 
     for predictors in predictors_list:
-        X = data[np.array(predictors)].values
-        y = data[outcome]
+      X = data[np.array(predictors)].values
+      y = data[outcome]
 
-        X = np.array(X)
-        y = np.array(y)    
+      X = np.array(X)
+      y = np.array(y)
+      mae_20 = []
+      mse_20 = []    
 
-        for i in range(20):
-            mae = []
-            mse = []
-            for train_index, test_index in kf.split(X, y):
-                # Split the data
-                X_train, X_test = X[train_index], X[test_index]
-                y_train, y_test = y[train_index]/norm_param, y[test_index]/norm_param
+      for i in range(1):
+        mae = []
+        mse = []
+        for train_index, test_index in kf.split(X, y):
+            # Split the data
+            X_train, X_test = X[train_index], X[test_index]
+            y_train, y_test = y[train_index]/norm_param, y[test_index]/norm_param
 
-                # Insert Regression Algorithm / LinearRegression(), Ridge(), BayesianRidge(), Lasso(alpha), ElasticNet(random_state), AdaBoostRegressor(random_state, n_estimators), RandomForestRegressor(max_depth, random_state), GradientBoostingRegressor(random_state), ExtraTreesRegressor(n_estimators, random_state)
-                model =  LinearRegression()
-                model.fit(X_train, y_train)
+            # Insert Regression Algorithm
+            #base_estimator=DecisionTreeRegressor(max_depth=10)
+            model = LinearRegression()
+            model.fit(X_train, y_train)
 
-                # Predict with X_test
-                y_hat = model.predict(X_test)
-                y_hat = y_hat.reshape(len(y_hat), 1)
+            # Predict with X_test
+            y_hat = model.predict(X_test)
+            y_hat = y_hat.reshape(len(y_hat), 1)
+            
+            bool_mae = np.isnan(mean_absolute_error(y_test, y_hat))
+            bool_mse = np.isnan(mean_squared_error(y_test, y_hat))
 
-                # Calculate the metric
+            # Calculate the metric
+            if bool_mae or bool_mse:
+                continue
+            else:
                 mae.append(mean_absolute_error(y_test, y_hat))
                 mse.append(mean_squared_error(y_test, y_hat))
 
-            mae_total.append(mean(mae)*norm_param)
-            mse_total.append(mean(mse)*(norm_param**2))
+        if (all(x <= ((2/norm_param)**2) for x in mse)):
+          mae_20.append(mean(mae))
+          mse_20.append(mean(mse))
+        else:
+          continue
+
+      if mse_20:
+        mae_total.append(mean(mae_20)*norm_param)
+        mse_total.append(mean(mse_20)*(norm_param**2))
+        mse_list.append(predictors)
+      else:
+        continue
 
     print("Mean Absolute Error: %.3f - Mean Squared Error: %.3f" %(mean(mae_total), mean(mse_total)))
     print("Minimum Mean Squared Error: %.3f" %(min(mse_total)))
-    print("Predictors : ", predictors_list[mse_total.index(min(mse_total))])
+    
+    Y = mse_total
+    X = mse_list
+
+    Z = [x for _,x in sorted(zip(Y,X))]
+    print(Z[0])
+    print("Minimum Number of Features :", len(Z[0]))
+    Z_temp = Z[:10]
+
+    arr_num = [0] * 12
+
+    for item in Z_temp:
+      if 'var_1' in item:
+        arr_num[0]=arr_num[0] + 1;
+      if 'var_2' in item:
+        arr_num[1]=arr_num[1] + 1;
+      if 'var_3' in item:
+        arr_num[2]=arr_num[2] + 1;
+      if 'var_4' in item:
+        arr_num[3]=arr_num[3] + 1;
+      if 'var_5' in item:
+        arr_num[4]=arr_num[4] + 1;
+      if 'var_6' in item:
+        arr_num[5]=arr_num[5] + 1;
+      if 'var_7' in item:
+        arr_num[6]=arr_num[6] + 1;
+      if 'var_8' in item:
+        arr_num[7]=arr_num[7] + 1;
+      if 'var_9' in item:
+        arr_num[8]=arr_num[8] + 1;
+      if 'var_10' in item:
+        arr_num[9]=arr_num[9] + 1;
+      if 'var_11' in item:
+        arr_num[10]=arr_num[10] + 1;
+      if 'var_12' in item:
+        arr_num[11]=arr_num[11] + 1;
+
+    print(arr_num)
