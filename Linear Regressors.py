@@ -38,7 +38,7 @@ if __name__ == "__main__":
     """LOAD DATA"""
 
     # Read data from CSV file
-    data = pd.read_csv (r'./filename_12vars_21people_mag.csv')
+    data = pd.read_csv (r'./filename_12vars_16people_mag.csv')
     warnings.filterwarnings("ignore")
     # Define y = f(x)
     predictors_list = np.array(my_combo)
