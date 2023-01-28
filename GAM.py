@@ -13,7 +13,7 @@ from itertools import chain, combinations
 
 if __name__ == "__main__":
 
-    data = pd.read_csv (r'/content/filename_12vars_16people_mag.csv')
+    data = pd.read_csv (r'./filename_12vars_16people_mag.csv')
     predictors = ['var_1','var_2','var_3','var_4','var_5','var_6','var_7','var_8','var_9','var_10','var_11','var_12']
     outcome = ['SpO2']
 
