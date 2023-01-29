@@ -96,7 +96,7 @@ if __name__ == '__main__':
           callbacks = [checkpointer]
 
           # fit the keras model on the dataset
-          model.fit(X_train, y_train, epochs=25, batch_size=5, verbose=0, validation_data = (X_test, y_test), callbacks = callbacks)
+          model.fit(X_train, y_train, epochs=40, batch_size=5, verbose=0, validation_data = (X_test, y_test), callbacks = callbacks)
           model.load_weights(checkpoint_filepath)
 
           # evaluate on test set
