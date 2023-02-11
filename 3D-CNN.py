@@ -48,8 +48,8 @@ def load_videos(path):
 
 if __name__ == "__main__":
 
-    videos = load_videos('./16videos')
-    #videos = load_videos('./21videos')
+    #videos = load_videos('./16videos')
+    videos = load_videos('./21videos')
 
     data = pd.read_csv (r'./filename_12vars_21people.csv')
     outcome = ['SpO2']
