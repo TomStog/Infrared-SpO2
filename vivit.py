@@ -230,7 +230,7 @@ def run_experiment():
     _ = model.fit(trainloader, epochs=EPOCHS, validation_data=testloader, callbacks = callbacks, verbose = 0)
     
     model.load_weights(checkpoint_filepath)
-    y_hat = model.predict(X_test)
+    #y_hat = model.predict(X_test)
     results = model.evaluate(X_test, y_test, batch_size=BATCH_SIZE)
     print("Test MSE:", results[0]*(norm_param**2))
     print("Test MAE:", results[1]*(norm_param))     
