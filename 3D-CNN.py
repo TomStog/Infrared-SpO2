@@ -51,7 +51,7 @@ if __name__ == "__main__":
     #videos = load_videos('./16videos')
     videos = load_videos('./21videos')
 
-    data = pd.read_csv (r'./filename_12vars_21people.csv')
+    data = pd.read_csv (r'./filename_12vars_21people_mag.csv')
     outcome = ['SpO2']
     y = data[outcome]
     
