@@ -253,7 +253,7 @@ if __name__ == "__main__":
     mae_total = []
     mse_total = []
     
-    for i in range(5):
+    for i in range(20):
         mae = []
         mae_temp = []
         mse = []
