@@ -65,7 +65,7 @@ if __name__ == "__main__":
       mae_20 = []
       mse_20 = []    
 
-      for i in range(1):
+      for i in range(20):
         mae = []
         mse = []
         for train_index, test_index in kf.split(X, y):
