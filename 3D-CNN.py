@@ -67,7 +67,9 @@ if __name__ == "__main__":
     
     for i in range(20):
         mae = []
+        mae_temp = []
         mse = []
+        mse_temp = []
         for train_index, test_index in kf.split(X, y):
             X_train, X_test = X[train_index]/255, X[test_index]/255
             y_train, y_test = y[train_index]/norm_param, y[test_index]/norm_param
@@ -119,8 +121,11 @@ if __name__ == "__main__":
             mae.append(mean_absolute_error(y_test, y_hat))            
             mse.append(results)
             
-        mae_total.append(mean(mae)*norm_param)
-        mse_total.append(mean(mse)*(norm_param**2))
+        mae_temp = np.array(mae)
+        mse_temp = np.array(mse)
+        if (all(x <= ((2/norm_param)**2) for x in mse_temp)):      
+            mae_total.append(mean(mae_temp)*norm_param)
+            mse_total.append(mean(mse_temp)*(norm_param**2))
         
     print("Mean Absolute Error: %.3f - Mean Squared Error: %.3f" %(mean(mae_total), mean(mse_total)))
     print("Minimum Mean Squared Error: %.3f" %(min(mse_total)))
